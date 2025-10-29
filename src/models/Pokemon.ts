@@ -12,3 +12,11 @@ export interface Pokemon {
   imageUrl?: string;
   status: PokemonStatus;
 }
+
+export enum PokemonNames {
+  PIKACHU = 'Pikachu',
+  CHARIZARD = 'Charizard',
+  BLASTOISE = 'Blastoise',
+  VENUSAUR = 'Venusaur',
+  MEWTWO = 'Mewtwo',
+}

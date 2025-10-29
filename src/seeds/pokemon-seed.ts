@@ -1,30 +1,30 @@
 import { db } from '../config/firebase.js';
-import { Pokemon, PokemonStatus } from '../models/Pokemon.js';
+import { Pokemon, PokemonNames, PokemonStatus } from '../models/Pokemon.js';
 
 const samplePokemons: Omit<Pokemon, 'id'>[] = [
   {
     status: PokemonStatus.AVAILABLE,
-    name: 'Pikachu',
+    name: PokemonNames.PIKACHU,
     imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png'
   },
   {
     status: PokemonStatus.AVAILABLE,
-    name: 'Charizard',
+    name: PokemonNames.CHARIZARD,
     imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png'
   },
   { 
     status: PokemonStatus.AVAILABLE,
-    name: 'Blastoise',
+    name: PokemonNames.BLASTOISE,
     imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png'
   },
   { 
     status: PokemonStatus.AVAILABLE,
-    name: 'Venusaur',
+    name: PokemonNames.VENUSAUR,
     imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png'
   },
   {  
     status: PokemonStatus.AVAILABLE,
-    name: 'Mewtwo',
+    name: PokemonNames.MEWTWO,
     imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png'
   }
 ];

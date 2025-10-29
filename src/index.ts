@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import pokemonRoutes from './routes/pokemon.js';
+import pokemonRoutes from './routes/pokemonV2.js';
 import { setupPokemonListener } from './listeners/pokemonListener.js';
 
 dotenv.config();
