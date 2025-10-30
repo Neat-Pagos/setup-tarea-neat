@@ -217,12 +217,13 @@ enum AdoptionStatus {
 
 ## 🔄 Sistema de Listener
 
-El proyecto incluye un listener de Firebase que detecta cambios en tiempo real en la colección de Pokémon:
+El proyecto incluye un listener de Firebase que detecta cambios en tiempo real en la colección de adopciones:
 
-- El listener monitorea todos los cambios en la colección `pokemons`
-- Cuando se detecta una modificación, automáticamente actualiza el estado del Pokémon a `prepared`
+- El listener monitorea todos los cambios en la colección `adoptions`
+- Cuando una adopción es actualizada al estado `approved`, automáticamente actualiza el estado del Pokémon asociado a `prepared`
 - Este listener se activa automáticamente al iniciar el servidor
 - Utiliza `onSnapshot` de Firestore para mantener una conexión en tiempo real
+- La actualización del estado del Pokémon se realiza de forma automática sin intervención manual
 
 ## 🛠️ Scripts Disponibles
 
