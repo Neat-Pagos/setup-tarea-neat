@@ -5,7 +5,7 @@ import { getPokemons } from '../helpers/getPokemons.js';
 const router = Router();
 
 // GET /api/pokemon - Listar todos los pokémons
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (_req: Request, res: Response) => {
   try {
     const pokemons = await getPokemons();
 
@@ -17,7 +17,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // GET /api/pokemon/adoptable-pokemons - Listar todos los pokémons adoptables
-router.get('/adoptable-pokemons', async (req: Request, res: Response) => {
+router.get('/adoptable-pokemons', async (_req: Request, res: Response) => {
   try {
     const pokemons = await getPokemons(PokemonStatus.AVAILABLE);
     res.json(pokemons);

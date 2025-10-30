@@ -11,6 +11,9 @@ export interface Pokemon {
   name: string;
   imageUrl?: string;
   status: PokemonStatus;
+  type: string;
+  diet: string;
+  region: string;
 }
 
 export enum PokemonNames {

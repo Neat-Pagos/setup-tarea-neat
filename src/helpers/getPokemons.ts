@@ -7,7 +7,7 @@ export const getPokemons = async (status?: PokemonStatus) => {
     const pokemons = snapshot.docs.map((doc) => doc.data());
     
     if (status) {
-      return pokemons.filter((pokemon) => pokemon.status !== status);
+      return pokemons.filter((pokemon) => pokemon.status === status);
     }
     
     return pokemons;
