@@ -52,7 +52,7 @@ router.post('/v2', async (req: Request, res: Response) => {
         rejectionReason: 'Información mínima requerida incompleta'
       });
 
-      return res.status(200).json({ message: 'Solicitud recibida' });
+      return res.status(204).json({ message: 'Información mínima requerida incompleta' });
     }
 
     // Crear adopción en estado de revisión
@@ -93,7 +93,6 @@ router.get('/review', async (_req: Request, res: Response) => {
   try {
     const adoptionsRef = db.collection('adoptions');
     const snapshot = await adoptionsRef
-      .where('status', 'in', [AdoptionStatus.UNDER_REVIEW, AdoptionStatus.PENDING])
       .orderBy('createdAt', 'desc')
       .get();
 
@@ -113,13 +112,12 @@ router.get('/review', async (_req: Request, res: Response) => {
 router.put('/manage/:id/reject', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { rejectionReason, reviewedBy } = req.body;
+    const { rejectionReason } = req.body;
 
     const adoptionRef = db.collection('adoptions').doc(id);
     await adoptionRef.update({
       status: AdoptionStatus.REJECTED,
       rejectionReason,
-      reviewedBy,
       reviewedAt: new Date(),
       updatedAt: new Date()
     });
@@ -135,13 +133,12 @@ router.put('/manage/:id/reject', async (req: Request, res: Response) => {
 router.put('/manage/:id/approve', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { approvalDate, reviewedBy } = req.body;
+    const { approvalDate } = req.body;
 
     const adoptionRef = db.collection('adoptions').doc(id);
     await adoptionRef.update({
       status: AdoptionStatus.APPROVED,
       approvalDate: approvalDate || new Date(),
-      reviewedBy,
       reviewedAt: new Date(),
       updatedAt: new Date()
     });

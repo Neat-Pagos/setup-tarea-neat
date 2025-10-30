@@ -4,10 +4,15 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --exec tsx src/index.ts",
-    "build": "tsc",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "nodemon --exec tsx src/index.ts",
+    "dev:frontend": "cd frontend && npm start",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "tsc",
+    "build:frontend": "cd frontend && npm run build",
     "start": "node dist/index.js",
-    "seed": "tsx src/seeds/pokemon-seed.ts"
+    "seed": "tsx src/seeds/pokemon-seed.ts",
+    "install:frontend": "cd frontend && npm install"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -19,6 +24,7 @@
     "@types/express": "^4.17.20",
     "@types/cors": "^2.8.15",
     "@types/node": "^20.8.0",
+    "concurrently": "^8.2.2",
     "nodemon": "^3.0.1",
     "tsx": "^4.0.0",
     "typescript": "^5.2.2"
