@@ -6,8 +6,10 @@ Backend API desarrollado con Express, TypeScript y Firebase para un sistema de a
 
 - API REST con Express y TypeScript
 - Integración con Firebase/Firestore
-- Listeners en tiempo real para cambios de estado de Pokémon
-- Sistema de adopción de Pokémon
+- Listeners en tiempo real para cambios de estado de adopciones
+- Actualización automática del estado de Pokémon cuando se aprueba una adopción
+- Sistema completo de adopción de Pokémon con workflow de revisión
+- Validación automática de datos de adopción
 - Seed de datos para Pokémon iniciales
 - CORS habilitado para desarrollo frontend
 
@@ -119,7 +121,7 @@ npm run seed
 │   ├── helpers/
 │   │   └── getPokemons.ts       # Helper para obtener Pokémon desde Firestore
 │   ├── listeners/
-│   │   └── pokemonListener.ts   # Listener en tiempo real para cambios de estado
+│   │   └── adoptionsListener.ts # Listener en tiempo real para cambios de adopciones
 │   ├── models/
 │   │   ├── Pokemon.ts           # Modelo y tipos de Pokémon
 │   │   └── Adoption.ts          # Modelo y tipos de Adopción
@@ -219,11 +221,20 @@ enum AdoptionStatus {
 
 El proyecto incluye un listener de Firebase que detecta cambios en tiempo real en la colección de adopciones:
 
-- El listener monitorea todos los cambios en la colección `adoptions`
-- Cuando una adopción es actualizada al estado `approved`, automáticamente actualiza el estado del Pokémon asociado a `prepared`
-- Este listener se activa automáticamente al iniciar el servidor
+- El listener monitorea todos los cambios en la colección `adoptions` usando `onSnapshot` de Firestore
+- Cuando una adopción es actualizada al estado `approved`, automáticamente actualiza el estado del Pokémon asociado (`pokemonId`) a `prepared`
+- Este listener se activa automáticamente al iniciar el servidor en `src/index.ts`
 - Utiliza `onSnapshot` de Firestore para mantener una conexión en tiempo real
 - La actualización del estado del Pokémon se realiza de forma automática sin intervención manual
+- Los errores durante la actualización se registran en la consola para debugging
+
+### Flujo de Aprobación
+
+1. Staff aprueba una adopción usando `PUT /api/adoptions/manage/:id/approve`
+2. La adopción se actualiza a estado `approved` en Firestore
+3. El listener detecta el cambio automáticamente
+4. El estado del Pokémon asociado se actualiza a `prepared`
+5. Se registra un log confirmando la actualización
 
 ## 🛠️ Scripts Disponibles
 
@@ -257,6 +268,7 @@ El proyecto incluye un listener de Firebase que detecta cambios en tiempo real e
 - **Validación de Datos**: Validación de información mínima requerida en adopciones
 - **Gestión de Estados**: Sistema completo de estados para adopciones con workflow de revisión
 - **Endpoints de Staff**: Endpoints dedicados para la gestión y revisión de adopciones por parte del staff
+- **Integración Automática**: Cuando una adopción es aprobada, el estado del Pokémon asociado se actualiza automáticamente a `prepared` mediante el listener en tiempo real
 
 ## 🤝 Contribuir
 
