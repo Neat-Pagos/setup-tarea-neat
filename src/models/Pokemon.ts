@@ -1,6 +1,5 @@
 export enum PokemonStatus {
   AVAILABLE = 'available',
-  PREPARATION = 'preparation',
   PREPARED = 'prepared',
   DELIVERED = 'delivered',
   DELIVERED_ERROR = 'delivered_error'

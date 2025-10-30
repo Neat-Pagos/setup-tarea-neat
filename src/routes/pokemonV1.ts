@@ -1,6 +1,5 @@
 import { Request, Response, Router } from 'express';
 import { PokemonStatus } from '../models/Pokemon.js';
-import { getPokemons } from '../helpers/getPokemons.js';
 import { db } from '../config/firebase.js';
 
 const router = Router();

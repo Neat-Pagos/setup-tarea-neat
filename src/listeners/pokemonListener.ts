@@ -12,14 +12,11 @@ export function setupPokemonListener() {
         ...change.doc.data()
       } as Pokemon;
       
-      if (change.type === 'modified' && pokemon.status === PokemonStatus.PREPARATION) {
+      if (change.type === 'modified') {
         console.log('Pokemon in preparation:', pokemon.name);
-        setTimeout(() => {
-          console.log('Pokemon prepared:', pokemon.name);
-          pokemonsRef.doc(pokemon.id).update({
-            status: PokemonStatus.PREPARED,
-          });
-        }, 20000);
+        pokemonsRef.doc(pokemon.id).update({
+          status: PokemonStatus.PREPARED,
+        });
       }
     });
   });

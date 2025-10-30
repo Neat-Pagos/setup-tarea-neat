@@ -44,7 +44,6 @@ Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
 PORT=3001
-GOOGLE_APPLICATION_CREDENTIALS=./firebase-service-account.json
 ```
 
 ### 4. Configurar Firestore
@@ -94,7 +93,22 @@ npm run seed
 
 ### Adopciones
 
-- `POST /api/adoptions` - Crear una nueva adopción
+**Crear adopciones:**
+- `POST /api/adoptions` - Crear una nueva adopción (versión básica)
+- `POST /api/adoptions/v2` - Crear una nueva solicitud de adopción (versión mejorada con validación)
+
+**Consultar adopciones:**
+- `GET /api/adoptions/adoptable-pokemons` - Listar todos los Pokémon adoptables
+- `GET /api/adoptions/review` - Obtener adopciones pendientes de revisión (para staff)
+
+**Gestión de adopciones:**
+- `PUT /api/adoptions/manage/:id/approve` - Aprobar una adopción
+- `PUT /api/adoptions/manage/:id/reject` - Rechazar una adopción
+
+**Gestión de entregas:**
+- `PUT /api/adoptions/delivery/:id/delivered` - Marcar como entregado
+- `PUT /api/adoptions/delivery/:id/comment` - Agregar comentario de entrega fallida
+- `PUT /api/adoptions/delivery/:id/security-concern` - Marcar preocupación de seguridad
 
 ## 🎯 Estructura del Proyecto
 
@@ -103,18 +117,21 @@ npm run seed
 │   ├── config/
 │   │   └── firebase.ts          # Configuración de Firebase
 │   ├── helpers/
-│   │   └── getPokemons.ts       # Helper para obtener Pokémon
+│   │   └── getPokemons.ts       # Helper para obtener Pokémon desde Firestore
 │   ├── listeners/
-│   │   └── pokemonListener.ts   # Listener en tiempo real
+│   │   └── pokemonListener.ts   # Listener en tiempo real para cambios de estado
 │   ├── models/
-│   │   └── Pokemon.ts           # Modelos y tipos
+│   │   ├── Pokemon.ts           # Modelo y tipos de Pokémon
+│   │   └── Adoption.ts          # Modelo y tipos de Adopción
 │   ├── routes/
-│   │   ├── pokemon.ts           # Rutas de Pokémon
+│   │   ├── pokemonV1.ts         # Rutas de Pokémon (versión 1)
+│   │   ├── pokemonV2.ts         # Rutas de Pokémon (versión 2, actual)
 │   │   └── adoptions.ts         # Rutas de adopciones
 │   ├── seeds/
-│   │   └── pokemon-seed.ts      # Seed de datos
-│   └── index.ts                 # Punto de entrada
+│   │   └── pokemon-seed.ts      # Seed de datos de Pokémon
+│   └── index.ts                 # Punto de entrada de la aplicación
 ├── firebase-service-account.json # Credenciales (no incluir en git)
+├── .env                         # Variables de entorno (no incluir en git)
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -130,24 +147,82 @@ interface Pokemon {
   name: string;
   imageUrl?: string;
   status: PokemonStatus;
+  type: string;
+  diet: string;
+  region: string;
+}
+
+enum PokemonStatus {
+  AVAILABLE = 'available',
+  PREPARED = 'prepared',
+  DELIVERED = 'delivered',
+  DELIVERED_ERROR = 'delivered_error'
 }
 ```
 
 ### Estados de Pokémon
 
 - `available` - Disponible para adopción
-- `preparation` - En preparación
-- `prepared` - Preparado
-- `delivered` - Entregado
+- `prepared` - Preparado para entrega
+- `delivered` - Entregado exitosamente
 - `delivered_error` - Error en la entrega
+
+### Adoption
+
+```typescript
+interface Adoption {
+  id: string;
+  pokemonId: string;
+  userData: UserData;
+  status: AdoptionStatus;
+  createdAt: Date;
+  reviewedAt?: Date;
+  reviewedBy?: string;
+  rejectionReason?: string;
+  approvalDate?: Date;
+  deliveryComment?: string;
+  securityConcern?: boolean;
+  securityComment?: string;
+  updatedAt: Date;
+}
+
+interface UserData {
+  name: string;
+  email: string;
+  phone: string;
+  region: string;
+  idNumber: string;
+}
+
+enum AdoptionStatus {
+  PENDING = 'pending',
+  UNDER_REVIEW = 'under_review',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  DELIVERED = 'delivered',
+  DELIVERY_FAILED = 'delivery_failed',
+  SECURITY_CONCERN = 'security_concern'
+}
+```
+
+### Estados de Adopción
+
+- `pending` - Pendiente
+- `under_review` - En revisión
+- `approved` - Aprobada
+- `rejected` - Rechazada
+- `delivered` - Entregada
+- `delivery_failed` - Entrega fallida
+- `security_concern` - Preocupación de seguridad
 
 ## 🔄 Sistema de Listener
 
-El proyecto incluye un listener de Firebase que detecta cambios en tiempo real:
+El proyecto incluye un listener de Firebase que detecta cambios en tiempo real en la colección de Pokémon:
 
-- Cuando un Pokémon entra en estado `preparation`, se inicia un temporizador de 20 segundos
-- Después del tiempo, el estado cambia automáticamente a `prepared`
+- El listener monitorea todos los cambios en la colección `pokemons`
+- Cuando se detecta una modificación, automáticamente actualiza el estado del Pokémon a `prepared`
 - Este listener se activa automáticamente al iniciar el servidor
+- Utiliza `onSnapshot` de Firestore para mantener una conexión en tiempo real
 
 ## 🛠️ Scripts Disponibles
 
@@ -158,19 +233,29 @@ El proyecto incluye un listener de Firebase que detecta cambios en tiempo real:
 
 ## 🔒 Seguridad
 
-- El archivo `firebase-service-account.json` NO debe subirse al repositorio
-- Está incluido en `.gitignore`
+- El archivo `firebase-service-account.json` NO debe subirse al repositorio (incluido en `.gitignore`)
+- El archivo `.env` NO debe subirse al repositorio (incluido en `.gitignore`)
 - Las variables sensibles deben ir en `.env`
+- El endpoint `/api/adoptions/v2` valida que los datos mínimos requeridos estén presentes antes de crear una adopción
+- Las adopciones con información incompleta se crean automáticamente en estado `rejected` sin notificar al usuario
 
 ## 📦 Tecnologías
 
-- **Express** - Framework web
-- **TypeScript** - Tipado estático
-- **Firebase Admin** - SDK para Firebase
-- **CORS** - Soporte para Cross-Origin
-- **dotenv** - Variables de entorno
-- **Nodemon** - Hot-reload en desarrollo
-- **tsx** - Ejecución directa de TypeScript
+- **Express** - Framework web para Node.js
+- **TypeScript** - Tipado estático para JavaScript
+- **Firebase Admin SDK** - SDK para servicios de Firebase (Firestore)
+- **CORS** - Soporte para Cross-Origin Resource Sharing
+- **dotenv** - Gestión de variables de entorno
+- **Nodemon** - Hot-reload automático en desarrollo
+- **tsx** - Ejecución directa de archivos TypeScript sin compilación previa
+
+## 🎨 Características Adicionales
+
+- **Versiones de API**: Soporte para múltiples versiones de endpoints (V1 y V2)
+- **Helper Functions**: Funciones auxiliares para reutilización de código (`getPokemons`)
+- **Validación de Datos**: Validación de información mínima requerida en adopciones
+- **Gestión de Estados**: Sistema completo de estados para adopciones con workflow de revisión
+- **Endpoints de Staff**: Endpoints dedicados para la gestión y revisión de adopciones por parte del staff
 
 ## 🤝 Contribuir
 

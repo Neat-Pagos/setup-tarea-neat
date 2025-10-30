@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { db } from '../config/firebase.js';
-import { Adoption, AdoptionStatus, UserData } from '../models/Adoption.js';
+import { AdoptionStatus, UserData } from '../models/Adoption.js';
 import { getPokemons } from '../helpers/getPokemons.js';
 
 const router = Router();
@@ -27,6 +27,10 @@ router.post('/', async (req: Request, res: Response) => {
 router.post('/v2', async (req: Request, res: Response) => {
   try {
     const { pokemonId, userData } = req.body;
+
+    if(!pokemonId || !userData) {
+      return res.status(400).json({ error: 'Pokemon ID and user data are required' });
+    }
 
     // Validar información mínima requerida
     const requiredFields: (keyof UserData)[] = ['name', 'email', 'phone', 'region', 'idNumber'];
