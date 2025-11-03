@@ -66,6 +66,23 @@ npm run dev
 
 El servidor se ejecutará en `http://localhost:3001`
 
+### Frontend
+
+```bash
+cd frontend
+yarn install
+# o
+npm install
+
+yarn start
+# o
+npm run start
+```
+
+- La app web se ejecuta en `http://localhost:3000`
+- El frontend está configurado con `proxy` a `http://localhost:3001` para el backend
+- No requiere configuración adicional si el backend corre en el puerto por defecto (`PORT=3001`)
+
 ### Compilar y producción
 
 ```bash
@@ -132,6 +149,15 @@ npm run seed
 │   ├── seeds/
 │   │   └── pokemon-seed.ts      # Seed de datos de Pokémon
 │   └── index.ts                 # Punto de entrada de la aplicación
+├── frontend/                    # Aplicación web (React)
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── AdoptionReview.tsx
+│   │   ├── services/
+│   │   │   └── adoptionsService.ts
+│   │   ├── index.tsx
+│   │   └── index.css
+│   └── package.json
 ├── firebase-service-account.json # Credenciales (no incluir en git)
 ├── .env                         # Variables de entorno (no incluir en git)
 ├── package.json

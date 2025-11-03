@@ -11,7 +11,9 @@
     "build:backend": "tsc",
     "build:frontend": "cd frontend && npm run build",
     "start": "node dist/index.js",
-    "seed": "tsx src/seeds/pokemon-seed.ts",
+    "seed:pokemon": "tsx src/seeds/pokemon-seed.ts",
+    "seed:adoptions": "tsx src/seeds/adoptions-seed.ts",
+    "seed": "concurrently \"npm run seed:pokemon\" \"npm run seed:adoptions\"",
     "install:frontend": "cd frontend && npm install"
   },
   "dependencies": {

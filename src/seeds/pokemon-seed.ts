@@ -529,13 +529,16 @@ export async function seedPokemons() {
     const pokemonsRef = db.collection('pokemons');
 
     // Add the predefined Pokemon
+    console.log('🌍 Seeding predefined Pokemon...');
+    let id = 1;
     samplePokemons.forEach((pokemon) => {
-      const docRef = pokemonsRef.doc();
+      const docRef = pokemonsRef.doc(id.toString());
       batch.set(docRef, {
         ...pokemon,
-        id: docRef.id,
+        id: id.toString(),
         createdAt: new Date()
       });
+      id++
     });
 
     // Add random Pokemon from different regions
@@ -543,12 +546,13 @@ export async function seedPokemons() {
     const additionalPokemon = await addRandomPokemonFromRegions();
     
     additionalPokemon.forEach((pokemon) => {
-      const docRef = pokemonsRef.doc();
+      const docRef = pokemonsRef.doc(id.toString());
       batch.set(docRef, {
         ...pokemon,
-        id: docRef.id,
+        id: id.toString(),
         createdAt: new Date()
       });
+      id++
     });
 
     await batch.commit();
