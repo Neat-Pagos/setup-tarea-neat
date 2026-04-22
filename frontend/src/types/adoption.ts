@@ -5,14 +5,7 @@ export enum AdoptionStatus {
   REJECTED = 'rejected',
   DELIVERED = 'delivered',
   DELIVERY_FAILED = 'delivery_failed',
-  SECURITY_CONCERN = 'security_concern'
-}
-
-export enum PokemonStatus {
-  AVAILABLE = 'available',
-  PREPARED = 'prepared',
-  DELIVERED = 'delivered',
-  DELIVERED_ERROR = 'delivered_error'
+  SECURITY_CONCERN = 'security_concern',
 }
 
 export interface UserData {
@@ -21,16 +14,6 @@ export interface UserData {
   phone: string;
   region: string;
   idNumber: string;
-}
-
-export interface PokemonData {
-  id: string;
-  name: string;
-  imageUrl?: string;
-  status: PokemonStatus;
-  type: string;
-  diet: string;
-  region: string;
 }
 
 export interface Adoption {
@@ -47,7 +30,6 @@ export interface Adoption {
   securityConcern?: boolean;
   securityComment?: string;
   updatedAt: string;
-  pokemonData?: PokemonData;
 }
 
 export interface AdoptionStats {
