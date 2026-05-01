@@ -23,6 +23,12 @@ export const MainLayout: React.FC = () => {
             >
               Pokémon
             </NavLink>
+            <NavLink
+              to="/pokemons/new"
+              className={({ isActive }) => `main-tab${isActive ? ' main-tab-active' : ''}`}
+            >
+              Agregar
+            </NavLink>
           </nav>
         </div>
       </div>

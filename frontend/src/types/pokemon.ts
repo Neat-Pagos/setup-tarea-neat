@@ -14,3 +14,5 @@ export interface Pokemon {
   diet: string;
   region: string;
 }
+
+export type CreatePokemonInput = Pick<Pokemon, 'name' | 'imageUrl' | 'type' | 'diet' | 'region'>;

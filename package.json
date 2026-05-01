@@ -13,18 +13,19 @@
     "start": "node dist/index.js",
     "seed:pokemon": "tsx src/seeds/pokemon-seed.ts",
     "seed:adoptions": "tsx src/seeds/adoptions-seed.ts",
-    "seed": "concurrently \"npm run seed:pokemon\" \"npm run seed:adoptions\"",
+    "seed": "npm run seed:pokemon && npm run seed:adoptions",
     "install:frontend": "cd frontend && npm install"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "firebase-admin": "^11.11.1"
+    "express": "^4.18.2",
+    "firebase-admin": "^11.11.1",
+    "zod": "^4.4.1"
   },
   "devDependencies": {
-    "@types/express": "^4.17.20",
     "@types/cors": "^2.8.15",
+    "@types/express": "^4.17.20",
     "@types/node": "^20.8.0",
     "concurrently": "^8.2.2",
     "nodemon": "^3.0.1",

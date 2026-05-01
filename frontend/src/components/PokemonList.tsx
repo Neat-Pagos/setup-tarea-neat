@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { pokemonService } from '../services/pokemonService';
 import { Pokemon, PokemonStatus } from '../types/pokemon';
 
@@ -83,6 +84,9 @@ export const PokemonList: React.FC = () => {
       <div className="header">
         <h1>Todos los Pokémon</h1>
         <p>Catálogo registrado en el centro de adopciones</p>
+        <Link className="header-action" to="/pokemons/new">
+          Agregar Pokémon
+        </Link>
       </div>
 
       {pokemons.length === 0 ? (
