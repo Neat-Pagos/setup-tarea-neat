@@ -1,5 +1,5 @@
 import { db } from '../config/firebase.js';
-import { Pokemon, PokemonNames, PokemonStatus } from '../models/Pokemon.js';
+import { Pokemon, PokemonStatus } from '../models/Pokemon.js';
 
 // Function to fetch Pokemon data from PokeAPI
 async function fetchPokemonData(pokemonId: number) {
@@ -148,22 +148,17 @@ export async function seedPokemons() {
     const batch = db.batch();
     const pokemonsRef = db.collection('pokemons');
 
-    // Add the predefined Pokemon
-    console.log('🌍 Seeding predefined Pokemon...');
-    let id = 1;
-
     // Add random Pokemon from different regions
     console.log('🌍 Fetching additional Pokemon from different regions...');
     const additionalPokemon = await addRandomPokemonFromRegions();
     
     additionalPokemon.forEach((pokemon) => {
-      const docRef = pokemonsRef.doc(id.toString());
+      const docRef = pokemonsRef.doc();
       batch.set(docRef, {
         ...pokemon,
-        id: id.toString(),
+        id: docRef.id,
         createdAt: new Date()
       });
-      id++
     });
 
     await batch.commit();

@@ -64,14 +64,26 @@ const adoptions: Partial<Adoption>[] = [
   }
 ]
 
+const getSeedPokemonIds = async (): Promise<string[]> => {
+  const snapshot = await db.collection('pokemons').limit(adoptions.length).get();
+  const pokemonIds = snapshot.docs.map((doc) => doc.id);
+
+  if (pokemonIds.length < adoptions.length) {
+    throw new Error(`Need at least ${adoptions.length} seeded Pokemon before seeding adoptions`);
+  }
+
+  return pokemonIds;
+}
+
 const seedAdoptions = async () => {
   try {
     const batch = db.batch();
     const adoptionsRef = db.collection('adoptions');
+    const pokemonIds = await getSeedPokemonIds();
 
     adoptions.forEach((adoption, idx) => {
       const docRef = adoptionsRef.doc();
-      batch.set(docRef, {...adoption, pokemonId: (idx + 1).toString()});
+      batch.set(docRef, {...adoption, id: docRef.id, pokemonId: pokemonIds[idx]});
     });
 
     await batch.commit();
