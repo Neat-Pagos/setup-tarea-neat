@@ -18,7 +18,4 @@ services:
     staticPublishPath: ./frontend/build
     envVars:
       - key: REACT_APP_API_URL
-        fromService:
-          type: web
-          name: pokemon-backend
-          property: host
+        value: https://pokemon-backend-zfjo.onrender.com/api
