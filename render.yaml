@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: pokemon-backend
+    env: node
+    buildCommand: yarn install && yarn build
+    startCommand: yarn start
+    envVars:
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false
+      - key: PORT
+        value: 3001
+
+  - type: web
+    name: pokemon-frontend
+    env: static
+    buildCommand: cd frontend && yarn install && yarn build
+    staticPublishPath: ./frontend/build
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: pokemon-backend
+          property: host
