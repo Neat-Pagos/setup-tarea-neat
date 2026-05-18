@@ -31,28 +31,24 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
         <div className="create-adoption">
           <div className="flex items-center gap-4 mb-4 flex-col">
             <img src={pokemon.imageUrl} className="rounded-full w-32 h-32 border" />
-            <h2 className="text-center">{`Solicitud de adopción de ${pokemon.name}`}</h2>
+            <h2 className="text-center mt-0">{`Solicitud de adopción de ${pokemon.name}`}</h2>
           </div>
-          <dl className="pokemon-meta">
-            <div className="pokemon-meta-row">
-              <dt>Tipo</dt>
-              <dd>{pokemon.type}</dd>
+          <div className="flex justify-around gap-4 mb-6">
+            <div className="flex flex-col text-start">
+              <span className="text-gray-500 text-sm">Tipo</span>
+              <span>{pokemon.type}</span>
             </div>
-            <div className="pokemon-meta-row">
-              <dt>Dieta</dt>
-              <dd>{pokemon.diet}</dd>
+            <div className="flex flex-col text-start">
+              <span className="text-gray-500 text-sm">Dieta</span>
+              <span>{pokemon.diet}</span>
             </div>
-            <div className="pokemon-meta-row">
-              <dt>Región</dt>
-              <dd>{pokemon.region}</dd>
+            <div className="flex flex-col text-start">
+              <span className="text-gray-500 text-sm">Región</span>
+              <span>{pokemon.region}</span>
             </div>
-          </dl>
+          </div>
           <div>
-            <AdoptionForm onSubmit={(e) => { console.log(e) }} />
-          </div>
-          <div className="button-container">
-            <button className="adoption-button secondary-button" onClick={handleModalClose}>Cerrar</button>
-            <button className="adoption-button primary-button" onClick={handleModalClose}>Enviar solicitud</button>
+            <AdoptionForm onSubmit={(e) => { console.log(e) }} onClose={handleModalClose} />
           </div>
         </div>
       </Modal>

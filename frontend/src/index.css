@@ -569,3 +569,74 @@ code {
 .justify-between {
   justify-content: space-between;
 }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+input[type="text"],
+input[type="email"],
+textarea,
+input[type="number"],
+input[type="tel"] {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: solid 1px #e1e8ed;
+}
+
+label {
+  margin: 0;
+  color: #666;
+  text-align: left;
+  font-size: 0.8rem;
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.grid {
+  display: grid;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.text-gray-500 {
+  color: #666;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.mt-0 {
+  margin-top: 0;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}

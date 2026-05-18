@@ -3,10 +3,11 @@ import { type UserData } from "../types/adoption";
 
 interface AdoptionFormProps {
   onSubmit: (userData: UserData) => void;
+  onClose: () => void;
   isLoading?: boolean;
 }
 
-const AdoptionForm: React.FC<AdoptionFormProps> = ({ onSubmit, isLoading = false }) => {
+const AdoptionForm: React.FC<AdoptionFormProps> = ({ onSubmit, isLoading = false, onClose }) => {
   const [formData, setFormData] = useState<UserData>({
     name: "",
     email: "",
@@ -68,79 +69,98 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ onSubmit, isLoading = false
 
   return (
     <form onSubmit={handleSubmit} className="adoption-form">
-      <div className="form-group">
-        <label htmlFor="name">Nombre *</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Tu nombre completo"
-          disabled={isLoading}
-        />
-        {errors.name && <span className="error-message">{errors.name}</span>}
+      <div className="form-grid">
+        <div className="form-group col-span-2">
+          <label htmlFor="name">Nombre *</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Tu nombre completo"
+            disabled={isLoading}
+          />
+          {errors.name && <span className="error-message">{errors.name}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="tu.email@ejemplo.com"
+            disabled={isLoading}
+          />
+          {errors.email && <span className="error-message">{errors.email}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="phone">Teléfono *</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="+1 (555) 123-4567"
+            disabled={isLoading}
+          />
+          {errors.phone && <span className="error-message">{errors.phone}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="region">Región *</label>
+          <input
+            type="text"
+            id="region"
+            name="region"
+            value={formData.region}
+            onChange={handleChange}
+            placeholder="Tu región"
+            disabled={isLoading}
+          />
+          {errors.region && <span className="error-message">{errors.region}</span>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="idNumber">Número de Identificación *</label>
+          <input
+            type="text"
+            id="idNumber"
+            name="idNumber"
+            value={formData.idNumber}
+            onChange={handleChange}
+            placeholder="Tu número de identificación"
+            disabled={isLoading}
+          />
+          {errors.idNumber && <span className="error-message">{errors.idNumber}</span>}
+        </div>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="email">Email *</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="tu.email@ejemplo.com"
+      <div className="button-container mt-8">
+        <button
+          className="adoption-button secondary-button"
+          onClick={(e) => {
+            e.preventDefault();
+            onClose();
+          }}
+          type="button"
+        >
+          Cerrar
+        </button>
+        <button
+          className="adoption-button primary-button"
+          onClick={() => null}
+          type="submit"
           disabled={isLoading}
-        />
-        {errors.email && <span className="error-message">{errors.email}</span>}
+        >
+          {isLoading ? "Enviando..." : "Enviar Solicitud"}
+        </button>
       </div>
-
-      <div className="form-group">
-        <label htmlFor="phone">Teléfono *</label>
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          placeholder="+1 (555) 123-4567"
-          disabled={isLoading}
-        />
-        {errors.phone && <span className="error-message">{errors.phone}</span>}
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="region">Región *</label>
-        <input
-          type="text"
-          id="region"
-          name="region"
-          value={formData.region}
-          onChange={handleChange}
-          placeholder="Tu región"
-          disabled={isLoading}
-        />
-        {errors.region && <span className="error-message">{errors.region}</span>}
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="idNumber">Número de Identificación *</label>
-        <input
-          type="text"
-          id="idNumber"
-          name="idNumber"
-          value={formData.idNumber}
-          onChange={handleChange}
-          placeholder="Tu número de identificación"
-          disabled={isLoading}
-        />
-        {errors.idNumber && <span className="error-message">{errors.idNumber}</span>}
-      </div>
-
-      <button type="submit" className="primary-button" disabled={isLoading}>
-        {isLoading ? "Enviando..." : "Enviar Solicitud"}
-      </button>
 
     </form>
   );
