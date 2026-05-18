@@ -2,7 +2,7 @@ services:
   - type: web
     name: pokemon-backend
     env: node
-    buildCommand: yarn install && yarn build
+    buildCommand: yarn install && yarn build:backend
     startCommand: yarn start
     plan: free
     envVars:
