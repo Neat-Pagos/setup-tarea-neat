@@ -41,10 +41,6 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
     }
   };
 
-  useEffect(() => {
-    console.log(`Modal is now ${isModalOpen ? "open" : "closed"}`);
-  }, [isModalOpen]);
-
   return (
     <>
       <div className="button-container">
@@ -71,7 +67,7 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
             </div>
           </div>
           <div>
-            <AdoptionForm onSubmit={(e) => handleSubmit(e)} onClose={handleModalClose} />
+            <AdoptionForm onSubmit={handleSubmit} onClose={handleModalClose} isLoading={isLoading} error={error} />
           </div>
         </div>
       </Modal>
