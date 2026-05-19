@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { type Pokemon } from "../types/pokemon";
+import { type Pokemon, PokemonStatus } from "../types/pokemon";
 import Modal from "./Modal";
 import AdoptionForm from "./AdoptionForm";
 import { type UserData } from "../types/adoption";
@@ -47,7 +47,13 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
   return (
     <>
       <div className="button-container">
-        <button className="adoption-button" onClick={handleModalOpen}>Adoptar</button>
+        <button
+          className="adoption-button"
+          onClick={handleModalOpen}
+          disabled={pokemon.status !== PokemonStatus.AVAILABLE}
+        >
+          {pokemon.status === PokemonStatus.AVAILABLE ? 'Adoptar' : 'No disponible'}
+        </button>
       </div>
       <Modal isOpen={isModalOpen} onClose={handleModalClose}>
         <div className="create-adoption">
