@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { type Pokemon } from "../types/pokemon";
 import Modal from "./Modal";
 import AdoptionForm from "./AdoptionForm";
+import { type UserData } from "../types/adoption";
 
 interface Props {
   pokemon: Pokemon;
@@ -9,6 +10,8 @@ interface Props {
 
 const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleModalOpen = (): void => {
     setIsModalOpen(true);
@@ -16,6 +19,26 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
 
   const handleModalClose = (): void => {
     setIsModalOpen(false);
+  };
+
+  const handleSubmit = async (userData: UserData): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3001/api'}/adoptions/v2`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pokemonId: pokemon.id, userData }),
+      });
+
+      if (!response.ok) throw new Error('Error al enviar la solicitud');
+
+      setIsModalOpen(false);
+    } catch (err) {
+      setError('Ocurrió un error. Intenta de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -48,7 +71,7 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
             </div>
           </div>
           <div>
-            <AdoptionForm onSubmit={(e) => { console.log(e) }} onClose={handleModalClose} />
+            <AdoptionForm onSubmit={(e) => handleSubmit(e)} onClose={handleModalClose} />
           </div>
         </div>
       </Modal>
