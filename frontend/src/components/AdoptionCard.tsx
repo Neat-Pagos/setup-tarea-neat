@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Adoption, AdoptionStatus } from '../types/adoption';
+import { adoptionsService } from '../services/adoptionsService';
 
 interface AdoptionCardProps {
   adoption: Adoption;
@@ -30,6 +31,28 @@ const formatDate = (dateString?: FirestoreTimestamp): string => {
 
 const AdoptionCard: React.FC<AdoptionCardProps> = ({ adoption }) => {
   const [status, setStatus] = useState<AdoptionStatus>(adoption.status);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleStatusChange = async (newStatus: AdoptionStatus): Promise<void> => {
+    if (newStatus !== AdoptionStatus.APPROVED && newStatus !== AdoptionStatus.REJECTED) {
+      setStatus(newStatus);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (newStatus === AdoptionStatus.APPROVED) {
+        await adoptionsService.approveAdoption(adoption.id);
+      } else {
+        await adoptionsService.rejectAdoption(adoption.id, '');
+      }
+      setStatus(newStatus);
+    } catch (err) {
+      console.error('Error updating adoption status:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="adoption-card" style={{ cursor: 'pointer' }}>
@@ -40,20 +63,26 @@ const AdoptionCard: React.FC<AdoptionCardProps> = ({ adoption }) => {
       </div>
 
       <div className="adoption-details">
-        <select
-          className={`status-badge status-${status}`}
-          value={status}
-          onChange={(e) => setStatus(e.target.value as AdoptionStatus)}
-        >
-          {Object.keys(AdoptionStatus).map((key) => {
-            const value = AdoptionStatus[key as keyof typeof AdoptionStatus];
-            return (
-              <option key={key} value={value}>
-                {STATUS_TEXT[value]}
-              </option>
-            );
-          })}
-        </select>
+        {isLoading ? (
+          <select className={`status-badge status-${status}`} disabled>
+            <option>Actualizando...</option>
+          </select>
+        ) : (
+          <select
+            className={`status-badge status-${status}`}
+            value={status}
+            onChange={(e) => handleStatusChange(e.target.value as AdoptionStatus)}
+          >
+            {Object.keys(AdoptionStatus).map((key) => {
+              const value = AdoptionStatus[key as keyof typeof AdoptionStatus];
+              return (
+                <option key={key} value={value}>
+                  {STATUS_TEXT[value]}
+                </option>
+              );
+            })}
+          </select>
+        )}
       </div>
 
       <div className="user-info">
