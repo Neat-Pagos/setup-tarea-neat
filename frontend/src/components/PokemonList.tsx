@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { pokemonService } from '../services/pokemonService';
 import { Pokemon, PokemonStatus } from '../types/pokemon';
 import CreateAdoption from './CreateAdoption';
+import { useBroadcastRefresh } from '../hooks/useBroadcastRefresh';
 
 const PLACEHOLDER_IMG =
   'https://via.placeholder.com/120x120/f0f0f0/999?text=%F0%9F%8C%9F';
@@ -34,6 +35,8 @@ export const PokemonList: React.FC = () => {
       setLoading(false);
     }
   }, []);
+
+  useBroadcastRefresh('pokemons', loadPokemons);
 
   useEffect(() => {
     void loadPokemons();

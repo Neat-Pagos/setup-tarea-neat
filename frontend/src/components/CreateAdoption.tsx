@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { type Pokemon } from "../types/pokemon";
+import { type Pokemon, PokemonStatus } from "../types/pokemon";
 import Modal from "./Modal";
 import AdoptionForm from "./AdoptionForm";
 import { type UserData } from "../types/adoption";
+import { useBroadcastRefresh } from "../hooks/useBroadcastRefresh";
 
 interface Props {
   pokemon: Pokemon;
@@ -12,6 +13,7 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { broadcast } = useBroadcastRefresh('adoptions');
 
   const handleModalOpen = (): void => {
     setIsModalOpen(true);
@@ -34,6 +36,7 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
       if (!response.ok) throw new Error('Error al enviar la solicitud');
 
       setIsModalOpen(false);
+      broadcast();
     } catch (err) {
       setError('Ocurrió un error. Intenta de nuevo.');
     } finally {
@@ -44,7 +47,13 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
   return (
     <>
       <div className="button-container">
-        <button className="adoption-button" onClick={handleModalOpen}>Adoptar</button>
+        <button
+          className="adoption-button"
+          onClick={handleModalOpen}
+          disabled={pokemon.status !== PokemonStatus.AVAILABLE}
+        >
+          {pokemon.status === PokemonStatus.AVAILABLE ? 'Adoptar' : 'No disponible'}
+        </button>
       </div>
       <Modal isOpen={isModalOpen} onClose={handleModalClose}>
         <div className="create-adoption">

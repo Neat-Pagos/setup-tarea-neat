@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Adoption, AdoptionStatus } from '../types/adoption';
 import { adoptionsService } from '../services/adoptionsService';
+import { useBroadcastRefresh } from '../hooks/useBroadcastRefresh';
 
 interface AdoptionCardProps {
   adoption: Adoption;
@@ -32,6 +33,7 @@ const formatDate = (dateString?: FirestoreTimestamp): string => {
 const AdoptionCard: React.FC<AdoptionCardProps> = ({ adoption }) => {
   const [status, setStatus] = useState<AdoptionStatus>(adoption.status);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { broadcast: broadcastPokemonUpdate } = useBroadcastRefresh('pokemons');
 
   const handleStatusChange = async (newStatus: AdoptionStatus): Promise<void> => {
     if (newStatus !== AdoptionStatus.APPROVED && newStatus !== AdoptionStatus.REJECTED) {
@@ -43,6 +45,7 @@ const AdoptionCard: React.FC<AdoptionCardProps> = ({ adoption }) => {
     try {
       if (newStatus === AdoptionStatus.APPROVED) {
         await adoptionsService.approveAdoption(adoption.id);
+        broadcastPokemonUpdate();
       } else {
         await adoptionsService.rejectAdoption(adoption.id, '');
       }

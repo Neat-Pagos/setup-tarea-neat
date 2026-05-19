@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { adoptionsService } from '../services/adoptionsService';
 import { Adoption, AdoptionStatus, AdoptionStats } from '../types/adoption';
+import { useBroadcastRefresh } from '../hooks/useBroadcastRefresh';
 import AdoptionCard from './AdoptionCard';
 
 const AdoptionReview: React.FC = () => {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadAdoptions();
-  }, []);
 
   const loadAdoptions = async (): Promise<void> => {
     try {
@@ -24,6 +21,40 @@ const AdoptionReview: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  useBroadcastRefresh('adoptions', loadAdoptions);
+
+  useEffect(() => {
+    loadAdoptions();
+  }, []);
+
+  const formatDate = (dateString?: { _seconds: number, _nanoseconds: number }): string => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString._seconds * 1000).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusText = (status: AdoptionStatus): string => {
+    const statusMap: Record<AdoptionStatus, string> = {
+      [AdoptionStatus.PENDING]: 'Pendiente',
+      [AdoptionStatus.UNDER_REVIEW]: 'En Revisión',
+      [AdoptionStatus.APPROVED]: 'Aprobada',
+      [AdoptionStatus.REJECTED]: 'Rechazada',
+      [AdoptionStatus.DELIVERED]: 'Entregada',
+      [AdoptionStatus.DELIVERY_FAILED]: 'Entrega Fallida',
+      [AdoptionStatus.SECURITY_CONCERN]: 'Preocupación de Seguridad'
+    };
+    return statusMap[status] || status;
+  };
+
+  const getStatusBadgeClass = (status: AdoptionStatus): string => {
+    return `status-badge status-${status}`;
   };
 
   const getStats = (): AdoptionStats => {
