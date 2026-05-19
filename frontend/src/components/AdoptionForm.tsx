@@ -5,9 +5,10 @@ interface AdoptionFormProps {
   onSubmit: (userData: UserData) => void;
   onClose: () => void;
   isLoading?: boolean;
+  error?: string | null;
 }
 
-const AdoptionForm: React.FC<AdoptionFormProps> = ({ onSubmit, isLoading = false, onClose }) => {
+const AdoptionForm: React.FC<AdoptionFormProps> = ({ onSubmit, isLoading = false, onClose, error }) => {
   const [formData, setFormData] = useState<UserData>({
     name: "",
     email: "",
@@ -141,25 +142,31 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ onSubmit, isLoading = false
         </div>
       </div>
 
+      {error && <p className="error-message">{error}</p>}
+
       <div className="button-container mt-8">
-        <button
-          className="adoption-button secondary-button"
-          onClick={(e) => {
-            e.preventDefault();
-            onClose();
-          }}
-          type="button"
-        >
-          Cerrar
-        </button>
-        <button
-          className="adoption-button primary-button"
-          onClick={() => null}
-          type="submit"
-          disabled={isLoading}
-        >
-          {isLoading ? "Enviando..." : "Enviar Solicitud"}
-        </button>
+        {isLoading ? (
+          <p>Enviando...</p>
+        ) : (
+          <>
+            <button
+              className="adoption-button secondary-button"
+              onClick={(e) => {
+                e.preventDefault();
+                onClose();
+              }}
+              type="button"
+            >
+              Cerrar
+            </button>
+            <button
+              className="adoption-button primary-button"
+              type="submit"
+            >
+              Enviar Solicitud
+            </button>
+          </>
+        )}
       </div>
 
     </form>
