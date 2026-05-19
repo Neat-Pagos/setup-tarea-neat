@@ -10,7 +10,6 @@ export const pokemonService = {
   async getAll(): Promise<Pokemon[]> {
     try {
       const response = await axios.get<Pokemon[]>(`${API_URL}/pokemon`);
-      console.log(response);
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.data) {

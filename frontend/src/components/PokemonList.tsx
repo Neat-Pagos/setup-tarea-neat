@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { pokemonService } from '../services/pokemonService';
 import { Pokemon, PokemonStatus } from '../types/pokemon';
+import CreateAdoption from './CreateAdoption';
 
 const PLACEHOLDER_IMG =
   'https://via.placeholder.com/120x120/f0f0f0/999?text=%F0%9F%8C%9F';
@@ -22,9 +23,9 @@ export const PokemonList: React.FC = () => {
         err instanceof Error
           ? err.message
           : typeof err === 'object' &&
-              err !== null &&
-              'error' in err &&
-              typeof (err as { error: unknown }).error === 'string'
+            err !== null &&
+            'error' in err &&
+            typeof (err as { error: unknown }).error === 'string'
             ? (err as { error: string }).error
             : 'Error al cargar los Pokémon';
       setError(message);
@@ -97,7 +98,7 @@ export const PokemonList: React.FC = () => {
       ) : (
         <div className="pokemon-grid">
           {pokemons.map((pokemon) => (
-            <article key={pokemon.id} className="pokemon-card">
+            <article key={pokemon.id} className="pokemon-card flex flex-col justify-between">
               <div className="pokemon-card-header">
                 <img
                   className="pokemon-card-image"
@@ -106,11 +107,16 @@ export const PokemonList: React.FC = () => {
                   onError={handleImageError}
                 />
                 <div className="pokemon-info">
-                  <h3>{pokemon.name}</h3>
-                  <p>ID: {pokemon.id}</p>
+                  <h3 className="text-truncate">{pokemon.name}</h3>
+                  <div className="pokemon-id">
+                    <p>ID: {pokemon.id}</p>
+                  </div>
                 </div>
               </div>
-              <div className={getStatusBadgeClass(pokemon.status)}>{getStatusText(pokemon.status)}</div>
+              <div>
+                <span className={getStatusBadgeClass(pokemon.status)}>{getStatusText(pokemon.status)}</span>
+              </div>
+
               <dl className="pokemon-meta">
                 <div className="pokemon-meta-row">
                   <dt>Tipo</dt>
@@ -125,6 +131,7 @@ export const PokemonList: React.FC = () => {
                   <dd>{pokemon.region}</dd>
                 </div>
               </dl>
+              <CreateAdoption pokemon={pokemon} />
             </article>
           ))}
         </div>
