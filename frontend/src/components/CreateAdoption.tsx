@@ -3,6 +3,7 @@ import { type Pokemon } from "../types/pokemon";
 import Modal from "./Modal";
 import AdoptionForm from "./AdoptionForm";
 import { type UserData } from "../types/adoption";
+import { useBroadcastRefresh } from "../hooks/useBroadcastRefresh";
 
 interface Props {
   pokemon: Pokemon;
@@ -12,6 +13,7 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { broadcast } = useBroadcastRefresh('adoptions');
 
   const handleModalOpen = (): void => {
     setIsModalOpen(true);
@@ -34,6 +36,7 @@ const CreateAdoption: React.FC<Props> = ({ pokemon }) => {
       if (!response.ok) throw new Error('Error al enviar la solicitud');
 
       setIsModalOpen(false);
+      broadcast();
     } catch (err) {
       setError('Ocurrió un error. Intenta de nuevo.');
     } finally {

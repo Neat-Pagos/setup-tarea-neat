@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { adoptionsService } from '../services/adoptionsService';
 import { Adoption, AdoptionStatus, AdoptionStats } from '../types/adoption';
+import { useBroadcastRefresh } from '../hooks/useBroadcastRefresh';
 
 const AdoptionReview: React.FC = () => {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadAdoptions();
-  }, []);
 
   const loadAdoptions = async (): Promise<void> => {
     try {
@@ -24,6 +21,12 @@ const AdoptionReview: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useBroadcastRefresh('adoptions', loadAdoptions);
+
+  useEffect(() => {
+    loadAdoptions();
+  }, []);
 
   const formatDate = (dateString?: { _seconds: number, _nanoseconds: number }): string => {
     if (!dateString) return 'N/A';
