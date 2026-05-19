@@ -31,5 +31,32 @@ export const adoptionsService = {
     } catch (error: any) {
       throw error.response?.data || { error: 'Error al rechazar adopción' };
     }
-  }
+  },
+
+  async markDelivered(adoptionId: string): Promise<any> {
+    try {
+      const response = await axios.put(`${API_URL}/adoptions/delivery/${adoptionId}/delivered`);
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { error: 'Error al marcar adopción como entregada' };
+    }
+  },
+
+  async markDeliveryFailed(adoptionId: string, deliveryComment: string): Promise<any> {
+    try {
+      const response = await axios.put(`${API_URL}/adoptions/delivery/${adoptionId}/comment`, { deliveryComment });
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { error: 'Error al registrar fallo de entrega' };
+    }
+  },
+
+  async markSecurityConcern(adoptionId: string, securityComment: string): Promise<any> {
+    try {
+      const response = await axios.put(`${API_URL}/adoptions/delivery/${adoptionId}/security-concern`, { securityComment });
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { error: 'Error al marcar preocupación de seguridad' };
+    }
+  },
 };
