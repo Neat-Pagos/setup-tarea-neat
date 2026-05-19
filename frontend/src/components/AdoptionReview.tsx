@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { adoptionsService } from '../services/adoptionsService';
 import { Adoption, AdoptionStatus, AdoptionStats } from '../types/adoption';
 import { useBroadcastRefresh } from '../hooks/useBroadcastRefresh';
+import AdoptionCard from './AdoptionCard';
 
 const AdoptionReview: React.FC = () => {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
@@ -126,63 +127,7 @@ const AdoptionReview: React.FC = () => {
       ) : (
         <div className="adoptions-grid">
           {adoptions.map((adoption) => (
-            <div 
-              key={adoption.id} 
-              className="adoption-card"
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="adoption-header">
-                <div className="pokemon-info">
-                  <h3>Pokemon ID: {adoption.pokemonId }</h3>
-                </div>
-              </div>
-
-              <div className="adoption-details">
-                <div className={getStatusBadgeClass(adoption.status)}>
-                  {getStatusText(adoption.status)}
-                </div>
-              </div>
-
-              <div className="user-info">
-                <h4>Información del Adoptante</h4>
-                <div className="user-field">
-                  <strong>Nombre:</strong>
-                  <span>{adoption.userData?.name || 'N/A'}</span>
-                </div>
-                <div className="user-field">
-                  <strong>Email:</strong>
-                  <span>{adoption.userData?.email || 'N/A'}</span>
-                </div>
-                <div className="user-field">
-                  <strong>Teléfono:</strong>
-                  <span>{adoption.userData?.phone || 'N/A'}</span>
-                </div>
-                <div className="user-field">
-                  <strong>Región:</strong>
-                  <span>{adoption.userData?.region || 'N/A'}</span>
-                </div>
-                <div className="user-field">
-                  <strong>ID:</strong>
-                  <span>{adoption.userData?.idNumber || 'N/A'}</span>
-                </div>
-              </div>
-
-              <div className="adoption-dates">
-                <p><strong>Fecha de Solicitud:</strong> {formatDate(adoption.createdAt as unknown as { _seconds: number, _nanoseconds: number })}</p>
-                {adoption.reviewedAt && (
-                  <p><strong>Fecha de Revisión:</strong> {formatDate(adoption.reviewedAt as unknown as { _seconds: number, _nanoseconds: number })}</p>
-                )}
-                {adoption.approvalDate && (
-                  <p><strong>Fecha de Aprobación:</strong> {formatDate(adoption.approvalDate as unknown as { _seconds: number, _nanoseconds: number })}</p>
-                )}
-                {adoption.rejectionReason && (
-                  <p><strong>Razón de Rechazo:</strong> {adoption.rejectionReason}</p>
-                )}
-                {adoption.reviewedBy && (
-                  <p><strong>Revisado por:</strong> {adoption.reviewedBy}</p>
-                )}
-              </div>
-            </div>
+            <AdoptionCard key={adoption.id} adoption={adoption} />
           ))}
         </div>
       )}
