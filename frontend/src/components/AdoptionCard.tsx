@@ -36,18 +36,38 @@ const AdoptionCard: React.FC<AdoptionCardProps> = ({ adoption }) => {
   const { broadcast: broadcastPokemonUpdate } = useBroadcastRefresh('pokemons');
 
   const handleStatusChange = async (newStatus: AdoptionStatus): Promise<void> => {
-    if (newStatus !== AdoptionStatus.APPROVED && newStatus !== AdoptionStatus.REJECTED) {
+    const actionable = [
+      AdoptionStatus.APPROVED,
+      AdoptionStatus.REJECTED,
+      AdoptionStatus.DELIVERED,
+      AdoptionStatus.DELIVERY_FAILED,
+      AdoptionStatus.SECURITY_CONCERN,
+    ];
+
+    if (!actionable.includes(newStatus)) {
       setStatus(newStatus);
       return;
     }
 
     setIsLoading(true);
     try {
-      if (newStatus === AdoptionStatus.APPROVED) {
-        await adoptionsService.approveAdoption(adoption.id);
-        broadcastPokemonUpdate();
-      } else {
-        await adoptionsService.rejectAdoption(adoption.id, '');
+      switch (newStatus) {
+        case AdoptionStatus.APPROVED:
+          await adoptionsService.approveAdoption(adoption.id);
+          broadcastPokemonUpdate();
+          break;
+        case AdoptionStatus.REJECTED:
+          await adoptionsService.rejectAdoption(adoption.id, '');
+          break;
+        case AdoptionStatus.DELIVERED:
+          await adoptionsService.markDelivered(adoption.id);
+          break;
+        case AdoptionStatus.DELIVERY_FAILED:
+          await adoptionsService.markDeliveryFailed(adoption.id, '');
+          break;
+        case AdoptionStatus.SECURITY_CONCERN:
+          await adoptionsService.markSecurityConcern(adoption.id, '');
+          break;
       }
       setStatus(newStatus);
     } catch (err) {
