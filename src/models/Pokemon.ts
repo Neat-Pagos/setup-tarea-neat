@@ -14,11 +14,3 @@ export interface Pokemon {
   diet: string;
   region: string;
 }
-
-export enum PokemonNames {
-  PIKACHU = 'Pikachu',
-  CHARIZARD = 'Charizard',
-  BLASTOISE = 'Blastoise',
-  VENUSAUR = 'Venusaur',
-  MEWTWO = 'Mewtwo',
-}

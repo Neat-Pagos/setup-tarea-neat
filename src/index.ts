@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import pokemonRoutes from './routes/pokemonV2.js';
 import adoptionRoutes from './routes/adoptions.js';
-import { setupAdoptionsListener } from './listeners/adoptionsListener.js';
 
 dotenv.config();
 
@@ -15,9 +14,6 @@ app.use(express.json());
 
 app.use('/api/pokemon', pokemonRoutes);
 app.use('/api/adoptions', adoptionRoutes);
-
-// Configurar listener de Firebase para adopciones
-setupAdoptionsListener();
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
