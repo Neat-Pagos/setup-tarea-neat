@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { adoptionsService } from '../services/adoptionsService';
 import { Adoption, AdoptionStatus, AdoptionStats } from '../types/adoption';
 
+const PLACEHOLDER_IMG =
+  'https://via.placeholder.com/120x120/f0f0f0/999?text=%F0%9F%8C%9F'; // TODO: Cambiar por un signo de interrogacion
+
 const AdoptionReview: React.FC = () => {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingAdoptionId, setUpdatingAdoptionId] = useState<string | null>(null);
 
   useEffect(() => {
     loadAdoptions();
@@ -51,6 +55,42 @@ const AdoptionReview: React.FC = () => {
 
   const getStatusBadgeClass = (status: AdoptionStatus): string => {
     return `status-badge status-${status}`;
+  };
+
+  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement>): void => {
+    event.currentTarget.src = PLACEHOLDER_IMG;
+  };
+
+  const handleApprove = async (adoptionId: string): Promise<void> => {
+    try {
+      setUpdatingAdoptionId(adoptionId);
+      setError(null);
+      await adoptionsService.approveAdoption(adoptionId);
+      await loadAdoptions();
+    } catch (err: any) {
+      setError(err.error || 'Error al aprobar la adopción');
+      console.error('Error approving adoption:', err);
+    } finally {
+      setUpdatingAdoptionId(null);
+    }
+  };
+
+  const handleReject = async (adoptionId: string): Promise<void> => {
+    const reason = window.prompt('Indica la razón del rechazo (opcional):');
+
+    if (reason === null) return;
+
+    try {
+      setUpdatingAdoptionId(adoptionId);
+      setError(null);
+      await adoptionsService.rejectAdoption(adoptionId, reason);
+      await loadAdoptions();
+    } catch (err: any) {
+      setError(err.error || 'Error al rechazar la adopción');
+      console.error('Error rejecting adoption:', err);
+    } finally {
+      setUpdatingAdoptionId(null);
+    }
   };
 
   const getStats = (): AdoptionStats => {
@@ -115,6 +155,8 @@ const AdoptionReview: React.FC = () => {
         </div>
       </div>
 
+      {error && <div className="error action-error">{error}</div>}
+
       {adoptions.length === 0 ? (
         <div className="no-adoptions">
           <h3>No hay adopciones disponibles</h3>
@@ -129,8 +171,15 @@ const AdoptionReview: React.FC = () => {
               style={{ cursor: 'pointer' }}
             >
               <div className="adoption-header">
+                <img
+                  className="pokemon-image"
+                  src={adoption.pokemonData?.imageUrl || PLACEHOLDER_IMG}
+                  alt={adoption.pokemonData?.name || 'Pokémon no encontrado'}
+                  onError={handleImageError}
+                />
                 <div className="pokemon-info">
-                  <h3>Pokemon ID: {adoption.pokemonId }</h3>
+                  <h3>{adoption.pokemonData?.name || 'Pokémon no encontrado'}</h3>
+                  {adoption.pokemonData && <p>ID: {adoption.pokemonData.id}</p>}
                 </div>
               </div>
 
@@ -179,6 +228,27 @@ const AdoptionReview: React.FC = () => {
                   <p><strong>Revisado por:</strong> {adoption.reviewedBy}</p>
                 )}
               </div>
+
+              {(adoption.status === AdoptionStatus.PENDING || adoption.status === AdoptionStatus.UNDER_REVIEW) && (
+                <div className="adoption-actions">
+                  <button
+                    type="button"
+                    className="approve-button"
+                    disabled={updatingAdoptionId === adoption.id}
+                    onClick={() => void handleApprove(adoption.id)}
+                  >
+                    {updatingAdoptionId === adoption.id ? 'Procesando...' : 'Aprobar'}
+                  </button>
+                  <button
+                    type="button"
+                    className="reject-button"
+                    disabled={updatingAdoptionId === adoption.id}
+                    onClick={() => void handleReject(adoption.id)}
+                  >
+                    {updatingAdoptionId === adoption.id ? 'Procesando...' : 'Rechazar'}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

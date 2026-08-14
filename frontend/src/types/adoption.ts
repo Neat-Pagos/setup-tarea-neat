@@ -1,3 +1,5 @@
+import { Pokemon } from './pokemon';
+
 export enum AdoptionStatus {
   PENDING = 'pending',
   UNDER_REVIEW = 'under_review',
@@ -18,7 +20,7 @@ export interface UserData {
 
 export interface Adoption {
   id: string;
-  pokemonId: string;
+  pokemonData: Pokemon | null;
   userData: UserData;
   status: AdoptionStatus;
   createdAt: string;

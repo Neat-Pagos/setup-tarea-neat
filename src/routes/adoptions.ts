@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { db } from '../config/firebase.js';
-import { AdoptionStatus, UserData } from '../models/Adoption.js';
+import { admin, db } from '../config/firebase.js';
+import { Adoption, AdoptionStatus, UserData } from '../models/Adoption.js';
 import { getPokemons } from '../helpers/getPokemons.js';
 import { createAdoptionRequest } from '../helpers/createAdoptionRequest.js';
 import { approveAdoption, rejectAdoption } from '../services/adoptionService.js';
@@ -61,11 +61,28 @@ router.get('/review', async (_req: Request, res: Response) => {
       .get();
 
     const adoptions = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+      ...doc.data(),
+      id: doc.id
+    } as Adoption));
+
+    if (adoptions.length === 0) {
+      return res.json([]);
+    }
+
+    const pokemonIds = [...new Set(adoptions.map(adoption => adoption.pokemonId))];
+    const pokemonsSnapshot = await db.collection('pokemons')
+      .where(admin.firestore.FieldPath.documentId(), 'in', pokemonIds)
+      .get();
+    const pokemonsById = new Map(
+      pokemonsSnapshot.docs.map(doc => [doc.id, { id: doc.id, ...doc.data() }])
+    );
+
+    const adoptionsWithPokemonData = adoptions.map(({ pokemonId, ...adoption }) => ({
+      ...adoption,
+      pokemonData: pokemonsById.get(pokemonId) ?? null
     }));
 
-    res.json(adoptions);
+    res.json(adoptionsWithPokemonData);
   } catch (error) {
     console.error('Error fetching adoptions for review:', error);
     res.status(500).json({ error: 'Internal server error' });

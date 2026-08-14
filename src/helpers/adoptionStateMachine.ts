@@ -1,7 +1,7 @@
 import { AdoptionStatus } from '../models/Adoption.js';
 
 export const availableTransitions: Record<AdoptionStatus, AdoptionStatus[]> = {
-    [AdoptionStatus.PENDING]: [AdoptionStatus.UNDER_REVIEW, AdoptionStatus.REJECTED],
+    [AdoptionStatus.PENDING]: [AdoptionStatus.APPROVED, AdoptionStatus.REJECTED],
     [AdoptionStatus.UNDER_REVIEW]: [AdoptionStatus.APPROVED, AdoptionStatus.REJECTED],
     [AdoptionStatus.APPROVED]: [AdoptionStatus.DELIVERED, AdoptionStatus.DELIVERY_FAILED, AdoptionStatus.SECURITY_CONCERN],
     [AdoptionStatus.REJECTED]: [],

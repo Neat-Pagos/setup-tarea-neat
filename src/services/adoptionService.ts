@@ -1,5 +1,6 @@
 import { db } from '../config/firebase.js';
 import { canTransitionAdoption } from '../helpers/adoptionStateMachine.js';
+import { contactUser } from '../helpers/contactUser.js';
 import { Adoption, AdoptionStatus } from '../models/Adoption.js';
 import { PokemonStatus } from '../models/Pokemon.js';
 import { transitionPokemonStatus } from './pokemonService.js';
@@ -9,8 +10,8 @@ const transitionAdoption = async (
   adoptionId: string,
   nextStatus: AdoptionStatus,
   extraData: Record<string, unknown>
-): Promise<void> => {
-  await db.runTransaction(async transaction => {
+): Promise<Adoption> => {
+  return await db.runTransaction(async transaction => {
     const adoptionRef = db.collection('adoptions').doc(adoptionId);
     const adoptionSnapshot = await transaction.get(adoptionRef);
 
@@ -37,19 +38,24 @@ const transitionAdoption = async (
       updatedAt: now,
       ...extraData
     });
+
+    return adoption;
+  }).then((adoption) => {
+    contactUser(adoption.userData, nextStatus);
+    return adoption;
   });
 };
 
 export const approveAdoption = async (
   adoptionId: string,
   approvalDate?: Date
-): Promise<void> => transitionAdoption(adoptionId, AdoptionStatus.APPROVED, {
+): Promise<Adoption> => transitionAdoption(adoptionId, AdoptionStatus.APPROVED, {
   approvalDate: approvalDate ?? new Date()
 });
 
 export const rejectAdoption = async (
   adoptionId: string,
   rejectionReason?: string
-): Promise<void> => transitionAdoption(adoptionId, AdoptionStatus.REJECTED, {
+): Promise<Adoption> => transitionAdoption(adoptionId, AdoptionStatus.REJECTED, {
   rejectionReason
 });
