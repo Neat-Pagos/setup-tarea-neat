@@ -15,7 +15,7 @@ Backend API desarrollado con Express, TypeScript y Firebase para un sistema de a
 
 ## 📋 Requisitos Previos
 
-- Node.js v18 o superior
+- Node.js v22.18 o superior (requerido por Impeccable)
 - Yarn o npm
 - Cuenta de Firebase con Firestore habilitado
 - Archivo de credenciales de Firebase (`firebase-service-account.json`)
@@ -92,6 +92,19 @@ yarn build
 # Ejecutar en producción
 yarn start
 ```
+
+### Revisar la calidad visual
+
+Impeccable está configurado para Codex y Cursor a nivel de proyecto. Para
+detectar anti-patrones de UI en el frontend:
+
+```bash
+npm run check:design
+```
+
+En el chat del agente, usa `/impeccable init` para crear el contexto de producto
+antes del primer trabajo de diseño. Los hooks instalados revisan
+automáticamente los archivos de UI después de editarlos.
 
 ### Seed de datos
 

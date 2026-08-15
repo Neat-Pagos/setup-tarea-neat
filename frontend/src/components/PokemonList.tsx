@@ -3,9 +3,6 @@ import { Link } from 'react-router-dom';
 import { pokemonService } from '../services/pokemonService';
 import { Pokemon, PokemonStatus } from '../types/pokemon';
 
-const PLACEHOLDER_IMG =
-  'https://via.placeholder.com/120x120/f0f0f0/999?text=%F0%9F%8C%9F';
-
 export const PokemonList: React.FC = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +37,7 @@ export const PokemonList: React.FC = () => {
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>): void => {
     const target = e.target as HTMLImageElement;
-    target.src = PLACEHOLDER_IMG;
+    target.hidden = true;
   };
 
   const getStatusText = (status: PokemonStatus): string => {
@@ -81,12 +78,21 @@ export const PokemonList: React.FC = () => {
 
   return (
     <div className="container">
-      <div className="header">
-        <h1>Todos los Pokémon</h1>
-        <p>Catálogo registrado en el centro de adopciones</p>
+      <div className="page-heading page-heading-with-action">
+        <div>
+          <h1>Archivo Pokémon</h1>
+          <p>Catálogo operativo del centro de adopciones.</p>
+        </div>
         <Link className="header-action" to="/pokemons/new">
-          Agregar Pokémon
+          <span aria-hidden="true">+</span> Agregar Pokémon
         </Link>
+      </div>
+
+      <div className="catalog-readout" aria-label={`${pokemons.length} registros en el catálogo`}>
+        <span>Registros en archivo</span>
+        <strong>{String(pokemons.length).padStart(2, '0')}</strong>
+        <span className="readout-line" aria-hidden="true" />
+        <small>Sincronizado con el centro</small>
       </div>
 
       {pokemons.length === 0 ? (
@@ -98,33 +104,24 @@ export const PokemonList: React.FC = () => {
         <div className="pokemon-grid">
           {pokemons.map((pokemon) => (
             <article key={pokemon.id} className="pokemon-card">
-              <div className="pokemon-card-header">
-                <img
-                  className="pokemon-card-image"
-                  src={pokemon.imageUrl || PLACEHOLDER_IMG}
-                  alt={pokemon.name}
-                  onError={handleImageError}
-                />
+              <div className={`pokemon-stage type-${pokemon.type.toLowerCase()}`}>
+                <span className="stage-orbit" aria-hidden="true" />
+                {pokemon.imageUrl ? <img className="pokemon-card-image" src={pokemon.imageUrl} alt={pokemon.name} onError={handleImageError} /> : <div className="pokemon-placeholder" role="img" aria-label={`Imagen pendiente de ${pokemon.name}`}><span>?</span></div>}
+                <span className="specimen-id">#{pokemon.id.slice(-3).padStart(3, '0')}</span>
+              </div>
+              <div className="pokemon-card-body">
+                <div className="pokemon-card-header">
                 <div className="pokemon-info">
                   <h3>{pokemon.name}</h3>
-                  <p>ID: {pokemon.id}</p>
+                  <p>{pokemon.region}</p>
                 </div>
+                <div className={getStatusBadgeClass(pokemon.status)}>{getStatusText(pokemon.status)}</div>
+                </div>
+                <dl className="pokemon-meta">
+                  <div className="pokemon-meta-row"><dt>Tipo</dt><dd>{pokemon.type}</dd></div>
+                  <div className="pokemon-meta-row"><dt>Dieta</dt><dd>{pokemon.diet}</dd></div>
+                </dl>
               </div>
-              <div className={getStatusBadgeClass(pokemon.status)}>{getStatusText(pokemon.status)}</div>
-              <dl className="pokemon-meta">
-                <div className="pokemon-meta-row">
-                  <dt>Tipo</dt>
-                  <dd>{pokemon.type}</dd>
-                </div>
-                <div className="pokemon-meta-row">
-                  <dt>Dieta</dt>
-                  <dd>{pokemon.diet}</dd>
-                </div>
-                <div className="pokemon-meta-row">
-                  <dt>Región</dt>
-                  <dd>{pokemon.region}</dd>
-                </div>
-              </dl>
             </article>
           ))}
         </div>

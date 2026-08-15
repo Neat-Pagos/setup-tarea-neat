@@ -90,14 +90,21 @@ export const PokemonCreateForm: React.FC = () => {
 
   return (
     <div className="container">
-      <div className="header">
-        <h1>Agregar Pokémon</h1>
-        <p>Crea un nuevo registro disponible en el catálogo de adopciones</p>
+      <div className="page-heading">
+        <h1>Nuevo registro</h1>
+        <p>Incorpora un Pokémon al archivo del centro de adopciones.</p>
       </div>
 
       <form className="pokemon-form" onSubmit={handleSubmit}>
         {error && <div className="error">{error}</div>}
 
+        <div className="form-intro">
+          <div className="form-specimen" aria-hidden="true"><span>?</span></div>
+          <div><strong>Ficha de ingreso</strong><p>Completa los datos esenciales. La imagen puede agregarse ahora o más tarde.</p></div>
+        </div>
+
+        <fieldset>
+          <legend>Identificación</legend>
         <div className="form-grid">
           <label className="form-field">
             <span>Nombre *</span>
@@ -132,18 +139,16 @@ export const PokemonCreateForm: React.FC = () => {
             />
           </label>
 
-          <label className="form-field">
-            <span>URL de imagen</span>
-            <input
-              type="url"
-              name="imageUrl"
-              value={formState.imageUrl}
-              onChange={handleChange}
-              placeholder="https://..."
-            />
-          </label>
         </div>
 
+        <label className="form-field">
+          <span>URL de imagen <small>Opcional</small></span>
+          <input type="url" name="imageUrl" value={formState.imageUrl} onChange={handleChange} placeholder="https://..." />
+        </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Cuidados</legend>
         <label className="form-field">
           <span>Dieta *</span>
           <textarea
@@ -154,6 +159,7 @@ export const PokemonCreateForm: React.FC = () => {
             placeholder="Ej: Omnívoro - bayas y frutas"
           />
         </label>
+        </fieldset>
 
         <div className="form-actions">
           <Link className="secondary-button" to="/pokemons">
