@@ -34,9 +34,11 @@ npm install
 
 1. Ve a [Firebase Console](https://console.firebase.google.com/)
 2. Crea un nuevo proyecto o usa uno existente
-3. Ve a "Project Settings" > "Service accounts"
-4. Genera una nueva clave privada
-5. Guarda el archivo JSON como `firebase-service-account.json` en la raíz del proyecto
+3. En el menú lateral, abre **Build > Authentication** y presiona **Get started** para habilitar Firebase Authentication
+4. En **Authentication > Sign-in method**, habilita el proveedor **Email/Password** (no es necesario habilitar Email link)
+5. Ve a **Project Settings > General > Your apps**, selecciona el ícono Web (`</>`) y registra una aplicación Web. No es necesario habilitar Firebase Hosting
+6. Copia el valor `apiKey` de la configuración de la aplicación Web; se usará como `FIREBASE_WEB_API_KEY` para que el endpoint de login valide el correo y la contraseña
+7. Ve a **Project Settings > Service accounts**, genera una nueva clave privada y guarda el archivo JSON como `firebase-service-account.json` en la raíz del proyecto
 
 **⚠️ IMPORTANTE**: Este archivo está en `.gitignore` y NO debe subirse al repositorio por seguridad.
 
@@ -50,7 +52,7 @@ FIREBASE_WEB_API_KEY=tu_clave_web_de_firebase
 FRONTEND_URL=http://localhost:3000
 ```
 
-Activa el proveedor **Email/Password** en Firebase Authentication y crea allí las cuentas del equipo. `FIREBASE_WEB_API_KEY` se obtiene en Project Settings > General > Your apps; no es la clave privada del service account.
+`FIREBASE_WEB_API_KEY` es el `apiKey` de la aplicación Web registrada en Firebase; no es la clave privada del service account. Las cuentas para iniciar sesión pueden crearse con `npm run register:user`, descrito más abajo.
 
 ### 4. Configurar Firestore
 
@@ -120,7 +122,9 @@ yarn seed
 npm run seed
 ```
 
-### Registrar un usuario
+### Scripts de preparación y mantenimiento
+
+#### Registrar un usuario para el login
 
 Con Email/Password habilitado en Firebase Authentication, ejecuta:
 
@@ -129,6 +133,33 @@ npm run register:user
 ```
 
 El comando solicita el correo y la contraseña de forma interactiva. Para automatización también admite `REGISTER_USER_EMAIL` y `REGISTER_USER_PASSWORD` como variables de entorno.
+
+La cuenta se crea en Firebase Authentication y puede usarse en la pantalla de login de la app. Este comando no agrega documentos a Firestore.
+
+#### Corregir los estados del seed
+
+```bash
+npm run fix-seed
+```
+
+Recorre las adopciones existentes y sincroniza el estado de cada Pokémon relacionado con el estado de su adopción. Úsalo después de cargar datos antiguos o si los estados del seed quedaron inconsistentes; no vuelve a crear el seed ni elimina información.
+
+#### Limpiar la base de datos para comenzar de cero
+
+```bash
+npm run clear
+```
+
+Elimina de forma recursiva **todas las colecciones y documentos de Firestore** del proyecto configurado. Esta acción es destructiva y no afecta a los usuarios de Firebase Authentication. Verifica el proyecto indicado por `firebase-service-account.json` antes de ejecutarla.
+
+Para un inicio completamente limpio de los datos de Firestore, ejecuta:
+
+```bash
+npm run clear
+npm run seed
+```
+
+Después, registra al menos un usuario con `npm run register:user` si aún no existe una cuenta para acceder a la app.
 
 ## 📡 Endpoints API
 
