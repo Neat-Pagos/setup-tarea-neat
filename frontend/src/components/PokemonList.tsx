@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 import { pokemonService } from '../services/pokemonService';
 import { Pokemon, PokemonStatus } from '../types/pokemon';
+import type { MainLayoutContext } from './MainLayout';
 
 export const PokemonList: React.FC = () => {
+  const { openPokemonModal } = useOutletContext<MainLayoutContext>();
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +35,9 @@ export const PokemonList: React.FC = () => {
 
   useEffect(() => {
     void loadPokemons();
+    const handleCreated = (): void => { void loadPokemons(); };
+    window.addEventListener('pokemon-created', handleCreated);
+    return () => window.removeEventListener('pokemon-created', handleCreated);
   }, [loadPokemons]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>): void => {
@@ -83,9 +88,9 @@ export const PokemonList: React.FC = () => {
           <h1>Archivo Pokémon</h1>
           <p>Catálogo operativo del centro de adopciones.</p>
         </div>
-        <Link className="header-action" to="/pokemons/new">
+        <button className="header-action" type="button" onClick={openPokemonModal}>
           <span aria-hidden="true">+</span> Agregar Pokémon
-        </Link>
+        </button>
       </div>
 
       <div className="catalog-readout" aria-label={`${pokemons.length} registros en el catálogo`}>

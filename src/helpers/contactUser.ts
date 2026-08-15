@@ -1,6 +1,6 @@
 // Contact the user on each adoption update (approved or rejected)
 
-import { AdoptionStatus, UserData } from "../models/Adoption";
+import { AdoptionStatus, UserData } from "../models/Adoption.js";
 
 export const contactUser = async (userData: UserData, adoptionStatus: AdoptionStatus): Promise<void> => {
     const { name, email } = userData;

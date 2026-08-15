@@ -46,7 +46,11 @@ Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
 PORT=3001
+FIREBASE_WEB_API_KEY=tu_clave_web_de_firebase
+FRONTEND_URL=http://localhost:3000
 ```
+
+Activa el proveedor **Email/Password** en Firebase Authentication y crea allí las cuentas del equipo. `FIREBASE_WEB_API_KEY` se obtiene en Project Settings > General > Your apps; no es la clave privada del service account.
 
 ### 4. Configurar Firestore
 
@@ -116,7 +120,25 @@ yarn seed
 npm run seed
 ```
 
+### Registrar un usuario
+
+Con Email/Password habilitado en Firebase Authentication, ejecuta:
+
+```bash
+npm run register:user
+```
+
+El comando solicita el correo y la contraseña de forma interactiva. Para automatización también admite `REGISTER_USER_EMAIL` y `REGISTER_USER_PASSWORD` como variables de entorno.
+
 ## 📡 Endpoints API
+
+Todos los endpoints requieren una cookie de sesión válida, excepto `POST /api/auth/login`.
+
+### Autenticación
+
+- `POST /api/auth/login` - Iniciar sesión con email y password
+- `GET /api/auth/session` - Consultar la sesión actual
+- `POST /api/auth/logout` - Cerrar la sesión
 
 ### Pokémon
 

@@ -1,0 +1,12 @@
+/* Decision controls act on the whole request, so they span the whole card. */
+.adoption-actions {
+  grid-column: 1 / -1;
+  padding: 18px 28px 24px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 620px) {
+  .adoption-actions {
+    padding: 18px 24px 24px;
+  }
+}

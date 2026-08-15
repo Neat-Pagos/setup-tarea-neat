@@ -1,15 +1,32 @@
 import React, { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { adoptionsService } from '../services/adoptionsService';
-import { Adoption, AdoptionStatus, AdoptionStats } from '../types/adoption';
+import { Adoption, AdoptionStatus } from '../types/adoption';
+import type { MainLayoutContext } from './MainLayout';
+import './AdoptionReview.css';
+
+type AdoptionGroup = 'under_review' | 'approved' | 'rejected';
+
+const adoptionGroups: Record<AdoptionGroup, AdoptionStatus[]> = {
+  under_review: [AdoptionStatus.PENDING, AdoptionStatus.UNDER_REVIEW],
+  approved: [AdoptionStatus.APPROVED, AdoptionStatus.DELIVERED],
+  rejected: [AdoptionStatus.REJECTED],
+};
 
 const AdoptionReview: React.FC = () => {
+  const { openAdoptionModal } = useOutletContext<MainLayoutContext>();
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingAdoptionId, setUpdatingAdoptionId] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<'all' | AdoptionStatus>('all');
+  const [statusFilter, setStatusFilter] = useState<AdoptionGroup>('under_review');
 
-  useEffect(() => { void loadAdoptions(); }, []);
+  useEffect(() => {
+    void loadAdoptions();
+    const handleCreated = (): void => { void loadAdoptions(); };
+    window.addEventListener('adoption-created', handleCreated);
+    return () => window.removeEventListener('adoption-created', handleCreated);
+  }, []);
 
   const loadAdoptions = async (): Promise<void> => {
     try {
@@ -47,25 +64,25 @@ const AdoptionReview: React.FC = () => {
   if (loading) return <div className="container"><div className="loading"><span className="loader-orbit" />Sincronizando solicitudes…</div></div>;
   if (error && adoptions.length === 0) return <div className="container"><div className="error"><strong>Error de sincronización</strong><span>{error}</span><button onClick={() => void loadAdoptions()}>Reintentar</button></div></div>;
 
-  const stats: AdoptionStats = {
-    total: adoptions.length, pending: adoptions.filter((item) => item.status === AdoptionStatus.PENDING).length,
-    under_review: adoptions.filter((item) => item.status === AdoptionStatus.UNDER_REVIEW).length,
-    approved: adoptions.filter((item) => item.status === AdoptionStatus.APPROVED).length,
-  };
-  const visible = statusFilter === 'all' ? adoptions : adoptions.filter((item) => item.status === statusFilter);
+  const stats = Object.fromEntries(
+    Object.entries(adoptionGroups).map(([group, statuses]) => [
+      group,
+      adoptions.filter((item) => statuses.includes(item.status)).length,
+    ]),
+  ) as Record<AdoptionGroup, number>;
+  const visible = adoptions.filter((item) => adoptionGroups[statusFilter].includes(item.status));
 
   return (
     <div className="container">
       <div className="page-heading review-heading">
         <div><h1>Revisión de adopciones</h1><p>Evalúa cada solicitud y mantén el flujo de entrega en movimiento.</p></div>
-        <div className="queue-signal"><span aria-hidden="true" /> Cola activa</div>
+        <div className="review-heading-actions"><button className="header-action" type="button" onClick={openAdoptionModal}><span aria-hidden="true">+</span> Nueva adopción</button></div>
       </div>
 
       <div className="stats-bar" aria-label="Resumen y filtros de solicitudes">
-        <button className={`stat-item${statusFilter === 'all' ? ' is-selected' : ''}`} onClick={() => setStatusFilter('all')}><span className="stat-number">{stats.total}</span><span className="stat-label">Total</span></button>
-        <button className={`stat-item stat-pending${statusFilter === AdoptionStatus.PENDING ? ' is-selected' : ''}`} onClick={() => setStatusFilter(AdoptionStatus.PENDING)}><span className="stat-number">{stats.pending}</span><span className="stat-label">Pendientes</span></button>
-        <button className={`stat-item stat-review${statusFilter === AdoptionStatus.UNDER_REVIEW ? ' is-selected' : ''}`} onClick={() => setStatusFilter(AdoptionStatus.UNDER_REVIEW)}><span className="stat-number">{stats.under_review}</span><span className="stat-label">En revisión</span></button>
-        <button className={`stat-item stat-approved${statusFilter === AdoptionStatus.APPROVED ? ' is-selected' : ''}`} onClick={() => setStatusFilter(AdoptionStatus.APPROVED)}><span className="stat-number">{stats.approved}</span><span className="stat-label">Aprobadas</span></button>
+        <button className={`stat-item stat-review${statusFilter === 'under_review' ? ' is-selected' : ''}`} onClick={() => setStatusFilter('under_review')}><span className="stat-number">{stats.under_review}</span><span className="stat-label">En revisión</span></button>
+        <button className={`stat-item stat-approved${statusFilter === 'approved' ? ' is-selected' : ''}`} onClick={() => setStatusFilter('approved')}><span className="stat-number">{stats.approved}</span><span className="stat-label">Aprobadas</span></button>
+        <button className={`stat-item stat-rejected${statusFilter === 'rejected' ? ' is-selected' : ''}`} onClick={() => setStatusFilter('rejected')}><span className="stat-number">{stats.rejected}</span><span className="stat-label">Rechazadas</span></button>
       </div>
 
       {error && <div className="error action-error"><strong>La acción no se completó</strong><span>{error}</span></div>}

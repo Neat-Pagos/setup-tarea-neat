@@ -1,12 +1,19 @@
-import axios from 'axios';
-import { Adoption } from '../types/adoption';
-
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+import { Adoption, UserData } from '../types/adoption';
+import { api } from './api';
 
 export const adoptionsService = {
+  async createAdoption(pokemonId: string, userData: UserData): Promise<{ message: string; adoptionId: string }> {
+    try {
+      const response = await api.post('/adoptions/v2', { pokemonId, userData });
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { error: 'Error al crear la solicitud de adopción' };
+    }
+  },
+
   async getReviewAdoptions(): Promise<Adoption[]> {
     try {
-      const response = await axios.get(`${API_URL}/adoptions/review`);
+      const response = await api.get('/adoptions/review');
       return response.data;
     } catch (error: any) {
       throw error.response?.data || { error: 'Error al obtener adopciones para revisión' };
@@ -15,7 +22,7 @@ export const adoptionsService = {
 
   async approveAdoption(adoptionId: string): Promise<any> {
     try {
-      const response = await axios.put(`${API_URL}/adoptions/manage/${adoptionId}/approve`);
+      const response = await api.put(`/adoptions/manage/${adoptionId}/approve`);
       return response.data;
     } catch (error: any) {
       throw error.response?.data || { error: 'Error al aprobar adopción' };
@@ -24,7 +31,7 @@ export const adoptionsService = {
 
   async rejectAdoption(adoptionId: string, reason: string): Promise<any> {
     try {
-      const response = await axios.put(`${API_URL}/adoptions/manage/${adoptionId}/reject`, {
+      const response = await api.put(`/adoptions/manage/${adoptionId}/reject`, {
         rejectionReason: reason
       });
       return response.data;

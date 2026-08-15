@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+import { AdoptionCreateModal } from './AdoptionCreateModal';
+import { PokemonCreateModal } from './PokemonCreateModal';
+import './CreationModals.css';
+
+export type MainLayoutContext = {
+  openAdoptionModal: () => void;
+  openPokemonModal: () => void;
+};
 
 /**
  * Shell with primary navigation tabs between adoptions review and Pokémon catalog.
  */
 export const MainLayout: React.FC = () => {
+  const { user, logout } = useAuth();
+  const [adoptionModalOpen, setAdoptionModalOpen] = useState(false);
+  const [pokemonModalOpen, setPokemonModalOpen] = useState(false);
+
   return (
     <>
       <header className="app-shell">
@@ -36,16 +49,13 @@ export const MainLayout: React.FC = () => {
             >
               <span className="tab-index">02</span> Pokémon
             </NavLink>
-            <NavLink
-              to="/pokemons/new"
-              className={({ isActive }) => `main-tab${isActive ? ' main-tab-active' : ''}`}
-            >
-              <span className="tab-index">03</span> Nuevo registro
-            </NavLink>
           </nav>
+          <button className="logout-button" type="button" onClick={() => void logout()} title={user?.email ?? undefined}>Salir</button>
         </div>
       </header>
-      <main><Outlet /></main>
+      <main><Outlet context={{ openAdoptionModal: () => setAdoptionModalOpen(true), openPokemonModal: () => setPokemonModalOpen(true) } satisfies MainLayoutContext} /></main>
+      <PokemonCreateModal open={pokemonModalOpen} onClose={() => setPokemonModalOpen(false)} onCreated={() => window.dispatchEvent(new Event('pokemon-created'))} />
+      <AdoptionCreateModal open={adoptionModalOpen} onClose={() => setAdoptionModalOpen(false)} onCreated={() => window.dispatchEvent(new Event('adoption-created'))} />
     </>
   );
 };

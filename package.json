@@ -14,6 +14,9 @@
     "seed:pokemon": "tsx src/seeds/pokemon-seed.ts",
     "seed:adoptions": "tsx src/seeds/adoptions-seed.ts",
     "seed": "npm run seed:pokemon && npm run seed:adoptions",
+    "clear": "tsx src/scripts/clear-database.ts",
+    "fix-seed": "tsx src/scripts/fix-seed.ts",
+    "register:user": "tsx src/scripts/register-user.ts",
     "install:frontend": "cd frontend && npm install",
     "check:design": "impeccable detect frontend/src"
   },

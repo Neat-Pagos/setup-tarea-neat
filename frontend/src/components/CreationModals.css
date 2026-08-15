@@ -1,0 +1,355 @@
+.header-action {
+  border: 0;
+  cursor: pointer;
+}
+
+.review-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.creation-modal {
+  width: min(680px, calc(100% - 32px));
+  max-height: min(860px, calc(100dvh - 32px));
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: 0 30px 80px rgba(23, 38, 61, .24);
+}
+
+.creation-modal-wide {
+  width: min(900px, calc(100% - 32px));
+}
+
+.creation-modal::backdrop {
+  background: rgba(11, 22, 38, .58);
+  backdrop-filter: blur(4px);
+}
+
+.creation-modal[open] {
+  animation: modal-enter .26s cubic-bezier(.16, 1, .3, 1);
+}
+
+.modal-panel {
+  max-height: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 26px 28px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font: 800 28px/1.1 var(--display);
+  letter-spacing: -.025em;
+}
+
+.modal-header p,
+.modal-section-heading p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.modal-close {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  color: var(--muted);
+  background: #eef1f0;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: var(--ink);
+  background: #e3e7e6;
+}
+
+.modal-close svg {
+  width: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.modal-body {
+  padding: 26px 28px 10px;
+  overflow-y: auto;
+}
+
+.adoption-modal-body {
+  display: grid;
+  gap: 28px;
+}
+
+.modal-error {
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: #8d2131;
+  background: var(--soft-red);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modal-section-heading {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.modal-section-heading h3 {
+  margin: 0;
+  font: 800 18px var(--display);
+}
+
+.modal-section-heading > span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #19764d;
+  background: #e4f7ed;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pokemon-picker {
+  max-height: 264px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.pokemon-option {
+  min-width: 0;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fafbf9;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease;
+}
+
+.pokemon-option:hover {
+  border-color: #aebbc0;
+}
+
+.pokemon-option.is-selected {
+  border-color: var(--blue);
+  background: var(--soft-blue);
+}
+
+.pokemon-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pokemon-option:has(input:focus-visible) {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.pokemon-option-image {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  color: var(--muted);
+  background: #edf1f3;
+  font-weight: 800;
+}
+
+.pokemon-option-image img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.pokemon-option-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.pokemon-option-copy strong,
+.pokemon-option-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pokemon-option-copy strong {
+  font-size: 13px;
+}
+
+.pokemon-option-copy small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.pokemon-option-check {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #b9c1c6;
+  border-radius: 50%;
+}
+
+.pokemon-option.is-selected .pokemon-option-check {
+  border: 5px solid var(--blue);
+  background: #fff;
+}
+
+.form-field-wide {
+  grid-column: 1 / -1;
+}
+
+.modal-loading,
+.modal-empty {
+  min-height: 132px;
+  padding: 22px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  color: var(--muted);
+  text-align: center;
+  background: #f6f7f5;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.modal-loading .loader-orbit {
+  width: 32px;
+  height: 32px;
+}
+
+.modal-empty strong {
+  color: var(--ink);
+}
+
+.modal-empty button {
+  margin-top: 6px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--ink);
+  background: #e6eae8;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-actions {
+  padding: 18px 28px 22px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  background: #fafbf9;
+}
+
+.modal-actions button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-secondary {
+  color: var(--ink);
+  background: #e9ecea;
+}
+
+.modal-primary {
+  color: #fff;
+  background: var(--ink);
+}
+
+.modal-actions button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+@keyframes modal-enter {
+  from { opacity: .6; transform: translateY(14px) scale(.985); }
+}
+
+@media (max-width: 620px) {
+  .main-tab:last-child {
+    display: flex;
+    font-size: 12px;
+  }
+
+  .main-tab:last-child::before {
+    content: none;
+  }
+
+  .review-heading-actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .creation-modal,
+  .creation-modal-wide {
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - 12px);
+    margin: auto 0 0;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .modal-header {
+    padding: 22px 20px 18px;
+  }
+
+  .modal-header h2 {
+    font-size: 24px;
+  }
+
+  .modal-body {
+    padding: 22px 20px 8px;
+  }
+
+  .pokemon-picker {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    padding: 14px 20px max(18px, env(safe-area-inset-bottom));
+  }
+
+  .modal-actions button {
+    flex: 1;
+  }
+}
